@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Chat</title>
+</head>
+<body>
+    <h2>Чат</h2>
+    <input type="number" id="user_id" placeholder="Введи user_id" />
+    <button onclick="connect()">Подключиться</button>
+    <br><br>
+    <input type="text" id="message" placeholder="Сообщение" />
+    <button onclick="sendMessage()">Отправить</button>
+    <br><br>
+    <div id="chat" style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:scroll;"></div>
+
+    <script>
+        let ws;
+
+        function connect() {
+            const userId = document.getElementById('user_id').value;
+            ws = new WebSocket(`ws://127.0.0.1:9000/chat/ws/${userId}`);
+
+            ws.onmessage = function(event) {
+                const chat = document.getElementById('chat');
+                chat.innerHTML += `<p>${event.data}</p>`;
+            };
+
+            ws.onopen = () => alert(`Подключен как User ${userId}`);
+            ws.onclose = () => alert('Отключен');
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            ws.send(message);
+        }
+    </script>
+</body>
+</html>
